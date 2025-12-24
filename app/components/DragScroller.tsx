@@ -1,13 +1,38 @@
 "use client";
-import React, { useRef } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import FinalScreen from "./FinalScreen";
 
 const MESSAGES = [
-  "Meu amor, cada dia com você é um presente.",
-  "Lembro do nosso primeiro encontro como se fosse hoje.",
-  "Rimos, choramos e crescemos juntos.",
-  "Você é meu porto seguro e minha maior alegria.",
-  "Segure minha mão e continue comigo.",
+  {
+    title: "Nosso Início",
+    text: "Meu amor, cada dia com você é um presente.",
+    detail: "Desde o primeiro momento, soube que você era especial. Sua risada ilumina meus dias mais difíceis.",
+    emoji: "💕"
+  },
+  {
+    title: "Memórias Preciosas",
+    text: "Lembro do nosso primeiro encontro como se fosse hoje.",
+    detail: "Cada conversa, cada olhar, cada momento ao seu lado ficou guardado no meu coração para sempre.",
+    emoji: "✨"
+  },
+  {
+    title: "Nossa Jornada",
+    text: "Rimos, choramos e crescemos juntos.",
+    detail: "Em cada desafio, você esteve ao meu lado. Em cada conquista, você foi minha maior torcedora. Construímos algo lindo juntos.",
+    emoji: "🌸"
+  },
+  {
+    title: "Meu Porto Seguro",
+    text: "Você é meu porto seguro e minha maior alegria.",
+    detail: "Nos seus braços encontro paz. No seu olhar encontro lar. Com você, aprendi o verdadeiro significado de amor.",
+    emoji: "💖"
+  },
+  {
+    title: "Nosso Futuro",
+    text: "Segure minha mão e continue comigo.",
+    detail: "Quero viver cada momento ao seu lado. Quero criar mais memórias, mais sorrisos, mais amor. Para sempre.",
+    emoji: "🌹"
+  },
 ];
 
 export default function DragScroller({ images }: { images: string[] }) {
@@ -15,6 +40,7 @@ export default function DragScroller({ images }: { images: string[] }) {
   const dragging = useRef(false);
   const startY = useRef(0);
   const startScroll = useRef(0);
+  const [isAtEnd, setIsAtEnd] = useState(false);
 
   function onPointerDown(e: React.PointerEvent) {
     const el = scrollerRef.current;
@@ -39,11 +65,28 @@ export default function DragScroller({ images }: { images: string[] }) {
       (e.target as Element).releasePointerCapture(e.pointerId);
     } catch (err) {}
     if (!el) return;
-    // Snap to nearest full viewport section
     const h = window.innerHeight || document.documentElement.clientHeight;
     const idx = Math.round(el.scrollTop / h);
     el.scrollTo({ top: idx * h, behavior: "smooth" });
   }
+
+  function checkScroll() {
+    const el = scrollerRef.current;
+    if (!el) return;
+    const h = window.innerHeight || document.documentElement.clientHeight;
+    const totalSections = MESSAGES.length + 1;
+    const lastSectionScroll = (totalSections - 1) * h;
+    const threshold = h * 0.3;
+    setIsAtEnd(el.scrollTop >= lastSectionScroll - threshold);
+  }
+
+  useEffect(() => {
+    const el = scrollerRef.current;
+    if (!el) return;
+    el.addEventListener('scroll', checkScroll);
+    checkScroll();
+    return () => el.removeEventListener('scroll', checkScroll);
+  }, []);
 
   return (
     <div
@@ -54,13 +97,16 @@ export default function DragScroller({ images }: { images: string[] }) {
       onPointerUp={onPointerUp}
       onPointerCancel={onPointerUp}
     >
-      <header className="hint">Arraste para baixo</header>
+      <header className={`hint ${isAtEnd ? 'hidden' : ''}`}>Arraste para baixo</header>
 
       <div className="sections">
         {MESSAGES.map((m, i) => (
           <section key={i} className="page-section">
             <div className="message-card">
-              <p>{m}</p>
+              <div className="message-title">{m.title}</div>
+              <div className="message-text">{m.text}</div>
+              <span className="message-emoji">{m.emoji}</span>
+              <div className="message-detail">{m.detail}</div>
             </div>
           </section>
         ))}
