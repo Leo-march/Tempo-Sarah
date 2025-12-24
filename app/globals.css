@@ -74,6 +74,13 @@ body {
   scroll-snap-align: start;
   padding: 48px 32px;
   box-sizing: border-box;
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+}
+.page-section.visible {
+  opacity: 1;
+  transform: translateY(0);
 }
 .message-card {
   max-width: 650px;

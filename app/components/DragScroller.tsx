@@ -5,32 +5,32 @@ import FinalScreen from "./FinalScreen";
 const MESSAGES = [
   {
     title: "Nosso Início",
-    text: "Meu amor, cada dia com você é um presente.",
-    detail: "Desde o primeiro momento, soube que você era especial. Sua risada ilumina meus dias mais difíceis.",
-    emoji: "💕"
+    text: "Meu amor, cada dia com você é um presente divino.",
+    detail: "Mesmo na escola nosso sentimentos foram reciprocos e com a maior benção, começamos do jeito certo!",
+    emoji: "😁"
   },
   {
     title: "Memórias Preciosas",
     text: "Lembro do nosso primeiro encontro como se fosse hoje.",
-    detail: "Cada conversa, cada olhar, cada momento ao seu lado ficou guardado no meu coração para sempre.",
+    detail: "Cada cinema em casa, cada saida, o pedido de namoro na heaven(ERA PRA SER NA MONTANHA RUSSA). Cada um dos nossos momentos foram mágicos!",
     emoji: "✨"
   },
   {
-    title: "Nossa Jornada",
-    text: "Rimos, choramos e crescemos juntos.",
-    detail: "Em cada desafio, você esteve ao meu lado. Em cada conquista, você foi minha maior torcedora. Construímos algo lindo juntos.",
+    title: "Nossa Jornada até agora",
+    text: "Rimos, choramos e crescemos juntos mesmo com a distância.",
+    detail: "Em cada desafio, você esteve ao meu lado. Em cada conquista, eu estava lá pra te apoiar. Construímos algo lindo juntos até agora!",
     emoji: "🌸"
   },
   {
     title: "Meu Porto Seguro",
     text: "Você é meu porto seguro e minha maior alegria.",
-    detail: "Nos seus braços encontro paz. No seu olhar encontro lar. Com você, aprendi o verdadeiro significado de amor.",
+    detail: "Nos seus braços encontro paz. No seu olhar encontro lar. Com você, aprendi o verdadeiro significado de amor minha linda!",
     emoji: "💖"
   },
   {
     title: "Nosso Futuro",
-    text: "Segure minha mão e continue comigo.",
-    detail: "Quero viver cada momento ao seu lado. Quero criar mais memórias, mais sorrisos, mais amor. Para sempre.",
+    text: "Segure minha mão e continue comigo meu bem.",
+    detail: "Quero viver cada momento ao seu lado. Quero criar mais memórias, mais sorrisos, mais amor. Para sempre vai ser você e Deus.",
     emoji: "🌹"
   },
 ];
@@ -91,7 +91,26 @@ export default function DragScroller({ images }: { images: string[] }) {
     if (!el) return;
     el.addEventListener('scroll', checkScroll);
     checkScroll();
-    return () => el.removeEventListener('scroll', checkScroll);
+    
+    // Observer para detectar seções visíveis e aplicar fade-in
+    const sections = el.querySelectorAll('.page-section');
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+          }
+        });
+      },
+      { threshold: 0.3 }
+    );
+    
+    sections.forEach(section => observer.observe(section));
+    
+    return () => {
+      el.removeEventListener('scroll', checkScroll);
+      observer.disconnect();
+    };
   }, []);
 
   return (
