@@ -68,9 +68,10 @@ body {
   scroll-snap-align: start;
 }
 .page-section {
-  height: 100vh;
+  min-height: 100vh;
   display: grid;
-  place-items: center;
+  align-items: start;
+  justify-items: center;
   scroll-snap-align: start;
   padding: 48px 32px;
   box-sizing: border-box;
@@ -148,13 +149,13 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow: hidden;
+  overflow: visible;
   background: linear-gradient(135deg, #ffd4e5 0%, #ffe5f0 50%, #fff5f7 100%);
 }
 .final-content {
   position: relative;
-  z-index: 20;
-  max-width: 900px;
+  z-index: 30;
+  max-width: 980px;
   width: 100%;
   padding: 48px 32px;
   text-align: center;
@@ -170,25 +171,29 @@ body {
 
 /* --- Carousel com moldura de foto física --- */
 .carousel {
-  margin: 32px auto;
+  margin: 24px auto 56px;
   position: relative;
   width: 100%;
-  max-width: 520px;
-  background: #ffffff;
-  border-radius: 4px;
-  padding: 24px;
-  box-shadow: 
-    0 2px 8px rgba(0,0,0,0.1),
-    0 8px 24px rgba(0,0,0,0.08),
-    0 16px 48px rgba(139, 76, 109, 0.12);
-  transform: rotate(-1deg);
+  max-width: 480px;
+  background: transparent;
+  border-radius: 8px;
+  padding: 0;
+  box-shadow: none;
+  transform: none;
   transition: transform 0.3s ease;
   display: flex;
   flex-direction: column;
   align-items: center;
 }
-.carousel:hover {
-  transform: rotate(0deg) scale(1.02);
+.carousel-frame {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 18px;
+  box-shadow: 0 8px 30px rgba(16,24,40,0.12), 0 2px 6px rgba(0,0,0,0.06);
+  border: 6px solid #fff;
+  min-width: 260px;
+  width: 100%;
+  box-sizing: border-box;
 }
 .carousel::before {
   content: '';
@@ -205,10 +210,20 @@ body {
   position: relative;
   width: 100%;
   max-width: 100%;
-  aspect-ratio: 3 / 4;
+  height: 520px;
   overflow: hidden;
-  border-radius: 2px;
+  border-radius: 6px;
   background: #f8f8f8;
+}
+
+.empty-placeholder {
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  width:100%;
+  height:100%;
+  color: #b0768f;
+  font-size:1.1rem;
 }
 .carousel-img {
   position: absolute;
@@ -219,14 +234,19 @@ body {
   left: 0;
   top: 0;
   opacity: 0;
-  transition: opacity 1000ms ease-in-out;
-  border-radius: 2px;
+  transition: opacity 800ms ease-in-out, transform 800ms ease;
+  border-radius: 6px;
+  transform: translateY(0);
+}
+.carousel-img.visible { 
+  opacity: 1; 
+  transform: translateY(0);
 }
 .carousel-img.visible { 
   opacity: 1; 
 }
 .carousel-dots {
-  margin-top: 20px;
+  margin-top: 16px;
   display: flex;
   gap: 10px;
   z-index: 10;
@@ -255,7 +275,7 @@ body {
   position: absolute; 
   inset: 0; 
   pointer-events: none; 
-  z-index: 10;
+  z-index: 5;
   overflow: hidden;
 }
 .heart {
@@ -459,8 +479,26 @@ body {
   display: flex;
   flex-direction: column;
   gap: 16px;
-  position: relative;
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 22px;
+  z-index: 60; /* keep above final content so controls are accessible */
   overflow: hidden;
+}
+
+/* When final screen is reached, position the player to the right of the carousel */
+.spotify-player.player-right {
+  left: calc(50% + 260px); /* center + half carousel (≈240) + gap */
+  transform: translateX(0);
+}
+
+@media (max-width: 900px) {
+  /* On smaller screens keep player centered at bottom */
+  .spotify-player.player-right {
+    left: 50%;
+    transform: translateX(-50%);
+  }
 }
 .spotify-player::before {
   content: '';
@@ -559,14 +597,15 @@ body {
 
 /* --- Time counter --- */
 .time-together { 
-  margin: 28px 0; 
+  margin: 18px auto; 
   color: var(--foreground);
-  background: rgba(255, 255, 255, 0.6);
-  padding: 24px;
-  border-radius: 16px;
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 197, 217, 0.3);
-  box-shadow: 0 8px 24px rgba(139, 76, 109, 0.1);
+  background: rgba(255, 255, 255, 0.75);
+  padding: 18px 28px;
+  border-radius: 14px;
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(255, 197, 217, 0.28);
+  box-shadow: 0 10px 30px rgba(139, 76, 109, 0.08);
+  max-width: 560px;
 }
 .time-row { 
   display: flex; 

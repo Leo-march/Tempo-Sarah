@@ -45,6 +45,9 @@ export default function DragScroller({ images }: { images: string[] }) {
   function onPointerDown(e: React.PointerEvent) {
     const el = scrollerRef.current;
     if (!el) return;
+    // don't start dragging when interacting with UI elements (like the spotify player)
+    const tgt = e.target as Element | null;
+    if (tgt && tgt.closest && tgt.closest('.spotify-player')) return;
     dragging.current = true;
     startY.current = e.clientY;
     startScroll.current = el.scrollTop;
@@ -68,16 +71,19 @@ export default function DragScroller({ images }: { images: string[] }) {
     const h = window.innerHeight || document.documentElement.clientHeight;
     const idx = Math.round(el.scrollTop / h);
     el.scrollTo({ top: idx * h, behavior: "smooth" });
+    // after smooth snap, re-evaluate position (small delay)
+    setTimeout(() => {
+      checkScroll();
+    }, 500);
   }
 
   function checkScroll() {
     const el = scrollerRef.current;
     if (!el) return;
     const h = window.innerHeight || document.documentElement.clientHeight;
-    const totalSections = MESSAGES.length + 1;
-    const lastSectionScroll = (totalSections - 1) * h;
-    const threshold = h * 0.3;
-    setIsAtEnd(el.scrollTop >= lastSectionScroll - threshold);
+    const sections = el.querySelectorAll('.page-section').length || (MESSAGES.length + 1);
+    const idx = Math.round(el.scrollTop / h);
+    setIsAtEnd(idx >= Math.max(0, sections - 1));
   }
 
   useEffect(() => {
@@ -112,7 +118,7 @@ export default function DragScroller({ images }: { images: string[] }) {
         ))}
 
         <section className="page-section">
-          <FinalScreen images={images} />
+          <FinalScreen images={images} isAtEnd={isAtEnd} />
         </section>
       </div>
     </div>

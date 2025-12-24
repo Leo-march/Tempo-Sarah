@@ -9,7 +9,7 @@ function listPublicImages() {
     const exts = [".jpg", ".jpeg", ".png", ".webp", ".gif"];
     const imgs = entries
       .filter((e) => e.isFile() && exts.includes(path.extname(e.name).toLowerCase()))
-      .map((e) => `/images/${e.name}`);
+      .map((e) => `/images/${encodeURIComponent(e.name)}`);
     return imgs;
   } catch (err) {
     return [];

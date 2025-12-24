@@ -15,15 +15,21 @@ export default function Carousel({ images, intervalMs = 3500 }: Props) {
 
   return (
     <div className="carousel">
-      <div className="carousel-image-container">
-        {images.map((src, i) => (
-          <img
-            key={src + i}
-            src={src}
-            className={`carousel-img ${i === index ? "visible" : "hidden"}`}
-            alt={`slide-${i}`}
-          />
-        ))}
+      <div className="carousel-frame">
+        <div className="carousel-image-container">
+          {images.length === 0 ? (
+            <div className="empty-placeholder">Sem imagens</div>
+          ) : (
+            images.map((src, i) => (
+              <img
+                key={src + i}
+                src={src}
+                className={`carousel-img ${i === index ? "visible" : "hidden"}`}
+                alt={`slide-${i}`}
+              />
+            ))
+          )}
+        </div>
       </div>
       <div className="carousel-dots">
         {images.map((_, i) => (

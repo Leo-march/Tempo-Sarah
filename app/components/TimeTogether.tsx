@@ -35,12 +35,43 @@ function diff(start: Date, now: Date) {
 }
 
 export default function TimeTogether({ startDate }: { startDate: string }) {
-  const [now, setNow] = useState(new Date());
+  const [now, setNow] = useState<Date | null>(null);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    // only set time after mount to avoid SSR/client mismatch
+    setMounted(true);
+    setNow(new Date());
     const id = setInterval(() => setNow(new Date()), 1000);
     return () => clearInterval(id);
   }, []);
+
+  if (!mounted || !now) {
+    // render a stable placeholder until hydrated
+    return (
+      <div className="time-together">
+        <div className="time-row">
+          <div>
+            <strong>--</strong>
+            <div>anos</div>
+          </div>
+          <div>
+            <strong>--</strong>
+            <div>meses</div>
+          </div>
+          <div>
+            <strong>--</strong>
+            <div>dias</div>
+          </div>
+        </div>
+        <div className="time-row small">
+          <div>--:</div>
+          <div>--:</div>
+          <div>--</div>
+        </div>
+      </div>
+    );
+  }
 
   const diffObj = diff(new Date(startDate), now);
 
